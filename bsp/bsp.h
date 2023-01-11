@@ -9,11 +9,13 @@ extern "C" {
 #endif // __cplusplus
 
 /** \bref    enter critical section
+ *  \details you should implement this function yourself, it's only declaration
  *  \details after this call bsp guarantees that current thread will not be
  *           interrupted */
 void bsp_enter_critical();
 
 /** \brief   leave critical section
+ *  \details you should implement this function yourself, it's only declaration
  *  \details after this call bsp allows thead interrupting */
 void bsp_leave_critical();
 
