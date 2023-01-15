@@ -19,6 +19,19 @@ void bsp_enter_critical();
  *  \details after this call bsp allows thead interrupting */
 void bsp_leave_critical();
 
+/** \brief   transmit char via service interface
+ *  \details you should guarantee that the character will be transmitted */
+void bsp_tx_char(char ch);
+
+/** \brief   receive char via service interface 
+ *  \details as the service interface is human readable console
+ *           you can use zero as no character at present moment
+ *  \details will be better if your implementation will be bufferized */
+char bsp_rx_char();
+
+/** \brief   request for force sent of bufferized data */
+void bsp_tx_flush();
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
