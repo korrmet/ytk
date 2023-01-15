@@ -16,6 +16,8 @@
 #define ASSERT_EVENT(evt, cond) \
   if (cond) { add_event(evt); return; }
 
+#define NO_EVENT 0
+
 /** \brief   state machine base class
  *  \details to use it you should make your own class and inherit this and
  *           implement yourself event and state handlers. state handler and
@@ -37,21 +39,11 @@ class state_machine
 
   /** \brief handle all active events and after that handle current state */
   void machine_step()
-  { event_t current_event;
-    while (event_queue.fetch_head(current_event))
+  { if (current_event != NO_EVENT)
     { event_handler(current_event);
-      event_queue.pop_head(); }
+      current_event = NO_EVENT; }
 
     state_handler(current_state); }
-
-  /** \brief this method is needed to populate event outside of the machine
-   *
-   *  \param event event that need to be handled
-   *
-   *  \return result of event registration
-   *  \retval true  event registrated successfully
-   *  \retval false event is not registrated */
-  bool add_event(event_t event) { event_queue.push_tail(event); }
 
   /** \brief this method must contain all of the state handlers
    *  
@@ -69,9 +61,9 @@ class state_machine
    *           in states or outside with method add_event() */
   state_t current_state;
 
-  /** \brief   queue of events that should be handled
-   *  \details if you don't use external event propagation mechanism make 
-   *           VOLUME template parameter equel 1 */
-  circular_buffer_static<event_t, VOLUME> event_queue; };
+  /** \brief   current evnet that shall be handled
+   *
+   *  \details event may be spawned only in one of the state */
+  event_t current_event; };
 
 #endif // STATE_MACHINE_HPP
