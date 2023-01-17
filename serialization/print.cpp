@@ -5,13 +5,13 @@
 #include "serialization/print.hpp"
 #include "bsp/bsp.h"
 
-print::print() : buffer(nullptr), size(0), counter(0), errcode(0) { }
+print::print() : errcode(0), buffer(nullptr), size(0), counter(0) { }
 
 print::print(uint8_t* buffer, uint32_t size)
-  : buffer(buffer),
+  : errcode(0),
+    buffer(buffer),
     size(size),
-    counter(0),
-    errcode(0)
+    counter(0)
 { }
 
 print& print::operator()(const char* str,
@@ -71,3 +71,4 @@ void print::print_string(char* str,
 
   for (uint32_t i = 0; i < actual_len - space_before; i++) { tx(spc); } }
 
+void print::tx(char ch) {}

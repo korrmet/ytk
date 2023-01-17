@@ -1,12 +1,58 @@
 CC = gcc
 CXX = g++
+INCLUDES += -I./
+
+ifeq ($(DISTR), Full)
+MODULES += kernel
+MODULES += print
+MODULES += scan
+MODULES += shell
+MODULES += crc
+endif
+
+OBJECTS = $(MODULES:=.o)
+
+all: format check test ytk.a docs
+
+ytk.a: $(OBJECTS)
+	touch ytk.a
+
+kernel.o:
+	touch kernel.o
+
+print.o:
+	touch print.o
+
+scan.o:
+	touch scan.o
+
+shell.o:
+	touch shell.o
+
+crc.o:
+	touch crc.o
 
 docs:
-	doxygen
+	@doxygen
 
-test:
+TEST_LIBS += -lCppUTest
+TEST_LIBS += -lCppUTestExt
+TEST_FLAG += -Wall
+TEST_FLAG += -Werror
+TEST_FLAG += -Dprivate=public
+TEST_OPTS += -v
+TEST_OPTS += -c
 
-.PHONY: clean format
+.PHONY: clean format test
+
+test: tests/print/string.cpp.test
+
+tests/print/string.cpp.test: serialization/print.hpp
+tests/print/string.cpp.test: serialization/print.cpp
+tests/print/string.cpp.test: tests/print/string.cpp \
+	                           serialization/print.cpp
+	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS)
+	@./$@ $(TEST_OPTS)
 
 ASTYLE_FLAGS += --style=pico
 ASTYLE_FLAGS += --indent=spaces=2
@@ -45,5 +91,21 @@ format:
 	@astyle $(ASTYLE_FLAGS) $(ASTYLE_SRCS)
 	@rm -rf $(shell find . -name "*.orig")
 
+CHECK_FLAGS += --enable=all
+CHECK_FLAGS += --inconclusive
+CHECK_FLAGS += --std=c++17
+CHECK_FLAGS += --report-progress
+CHECK_FLAGS += --suppress=missingIncludeSystem
+CHECK_FLAGS += --suppress=cstyleCast
+ifeq ($(BUGHUNT), Enable)
+CHECK_FLAGS += --bug-hunting
+endif
+
+CHECK_FLAGS += --force
+CHECK_SRCS = $(ASTYLE_SRCS)
+
+check:
+	@cppcheck $(CHECK_FLAGS) $(INCLUDES) $(CHECK_SRCS)
+
 clean:
-	@rm -rf docs
+	@rm -rf ytk.a docs $(shell find . -name "*.test") $(shell find . -name "*.o")
