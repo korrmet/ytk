@@ -49,11 +49,18 @@ void print::print_string(char* str,
 { uint32_t actual_len = 0;
   char* _str = str;
 
-  while (*_str) { actual_len++; str++; }
+  while (*_str) { actual_len++; _str++; }
 
-  uint32_t space = len - actual_len;
+  uint32_t space = 0;
+  bool make_brackets = false;
 
-  if (actual_len > len) { actual_len = len - 2; }
+  if (len)
+  { space = len - actual_len;
+
+    if (actual_len > len)
+    { actual_len = len - 2;
+      space = 0;
+      make_brackets = true; } }
 
   uint32_t space_before = 0;
 
@@ -65,10 +72,15 @@ void print::print_string(char* str,
     // ALIGN_LEFT, it's no require any spaces before string
     default:                                     break; }
 
+  if (make_brackets) { tx('['); }
+
   for (uint32_t i = 0; i < space_before; i++) { tx(spc); }
 
   for (uint32_t i = 0; i < actual_len; i++) { tx(str[i]); }
 
-  for (uint32_t i = 0; i < actual_len - space_before; i++) { tx(spc); } }
+  for (uint32_t i = 0; i < space - space_before; i++) { tx(spc); }
 
-void print::tx(char ch) {}
+  if (make_brackets) { tx(']'); } }
+
+// TODO: not finished, not handle bufferized output
+void print::tx(char ch) { bsp_tx_char(ch); }

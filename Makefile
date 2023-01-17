@@ -41,17 +41,18 @@ TEST_LIBS += -lCppUTestExt
 TEST_FLAG += -Wall
 TEST_FLAG += -Werror
 TEST_FLAG += -Dprivate=public
-TEST_FLAG += --coverage
 TEST_FLAG += -g3
 TEST_FLAG += -ggdb
 
 TEST_OPTS += -v
 TEST_OPTS += -c
 
-.PHONY: clean format test
+TESTS += tests/print/string.cpp.test
 
-test: tests/print/string.cpp.test
-	@gcov $(shell find -name "*.gcda") -H
+.PHONY: clean format test
+.PRECIOUS: $(TESTS)
+
+test: $(TESTS)
 
 tests/print/string.cpp.test: serialization/print.hpp
 tests/print/string.cpp.test: serialization/print.cpp
