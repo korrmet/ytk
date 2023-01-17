@@ -1,3 +1,6 @@
 *.swp
 docs
 *.test
+*.gcov
+*.gcno
+*.gcda

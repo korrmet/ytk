@@ -37,15 +37,21 @@ docs:
 
 TEST_LIBS += -lCppUTest
 TEST_LIBS += -lCppUTestExt
+
 TEST_FLAG += -Wall
 TEST_FLAG += -Werror
 TEST_FLAG += -Dprivate=public
+TEST_FLAG += --coverage
+TEST_FLAG += -g3
+TEST_FLAG += -ggdb
+
 TEST_OPTS += -v
 TEST_OPTS += -c
 
 .PHONY: clean format test
 
 test: tests/print/string.cpp.test
+	@gcov $(shell find -name "*.gcda") -H
 
 tests/print/string.cpp.test: serialization/print.hpp
 tests/print/string.cpp.test: serialization/print.cpp
@@ -82,14 +88,14 @@ ASTYLE_FLAGS += --max-code-length=80
 ASTYLE_FLAGS += --break-after-logical
 ASTYLE_FLAGS += --lineend=linux
 
-ASTYLE_SRCS += $(shell find . -name "*.cpp")
-ASTYLE_SRCS += $(shell find . -name "*.hpp")
-ASTYLE_SRCS += $(shell find . -name "*.h")
-ASTYLE_SRCS += $(shell find . -name "*.c")
+ASTYLE_SRCS += $(shell find -name "*.cpp")
+ASTYLE_SRCS += $(shell find -name "*.hpp")
+ASTYLE_SRCS += $(shell find -name "*.h")
+ASTYLE_SRCS += $(shell find -name "*.c")
 
 format:
 	@astyle $(ASTYLE_FLAGS) $(ASTYLE_SRCS)
-	@rm -rf $(shell find . -name "*.orig")
+	@rm -rf $(shell find -name "*.orig")
 
 CHECK_FLAGS += --enable=all
 CHECK_FLAGS += --inconclusive
@@ -108,4 +114,10 @@ check:
 	@cppcheck $(CHECK_FLAGS) $(INCLUDES) $(CHECK_SRCS)
 
 clean:
-	@rm -rf ytk.a docs $(shell find . -name "*.test") $(shell find . -name "*.o")
+	@rm -rf ytk.a 
+	@rm -rf docs 
+	@rm -rf $(shell find -name "*.test")
+	@rm -rf $(shell find -name "*.o")
+	@rm -rf $(shell find -name "*.gcda")
+	@rm -rf $(shell find -name "*.gcno")
+	@rm -rf $(shell find -name "*.gcov")
