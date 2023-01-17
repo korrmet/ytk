@@ -10,7 +10,7 @@
 /** \brief   checks condiniton and populate event
  *  \details event population is final point in your state handling, no code
  *           after this action will be executed
- *  
+ *
  *  \param evt  event code
  *  \param cond condition */
 #define ASSERT_EVENT(evt, cond) \
@@ -27,43 +27,43 @@
 template <uint32_t VOLUME>
 class state_machine
 { public:
-  /** \brief   state type
-   *  \details make your own states using define or enum mechanisms, it
-   *           will be implicitly casted to this type */
-  typedef uint32_t state_t;
+    /** \brief   state type
+     *  \details make your own states using define or enum mechanisms, it
+     *           will be implicitly casted to this type */
+    typedef uint32_t state_t;
 
-  /** \brief   event type
-   *  \details make your own events using define or enum mechanisms, it
-   *           will be implicitly casted to this type */
-  typedef uint32_t event_t;
+    /** \brief   event type
+     *  \details make your own events using define or enum mechanisms, it
+     *           will be implicitly casted to this type */
+    typedef uint32_t event_t;
 
-  /** \brief handle all active events and after that handle current state */
-  void machine_step()
-  { if (current_event != NO_EVENT)
-    { event_handler(current_event);
-      current_event = NO_EVENT; }
+    /** \brief handle all active events and after that handle current state */
+    void machine_step()
+    { if (current_event != NO_EVENT)
+      { event_handler(current_event);
+        current_event = NO_EVENT; }
 
-    state_handler(current_state); }
+      state_handler(current_state); }
 
-  /** \brief this method must contain all of the state handlers
-   *  
-   *  \param state current state that should be handled */
-  virtual void state_handler(state_t state) = 0;
+    /** \brief this method must contain all of the state handlers
+     *
+     *  \param state current state that should be handled */
+    virtual void state_handler(state_t state) = 0;
 
-  /** \brief this method must contain all of the event handlers
-   * 
-   *  \param event current event that should be handled */
-  virtual void event_handler(event_t event) = 0;
+    /** \brief this method must contain all of the event handlers
+     *
+     *  \param event current event that should be handled */
+    virtual void event_handler(event_t event) = 0;
 
   private:
-  /** \brief   current operating state
-   *  \details state may be switched in event only. events may be propogated
-   *           in states or outside with method add_event() */
-  state_t current_state;
+    /** \brief   current operating state
+     *  \details state may be switched in event only. events may be propogated
+     *           in states or outside with method add_event() */
+    state_t current_state;
 
-  /** \brief   current evnet that shall be handled
-   *
-   *  \details event may be spawned only in one of the state */
-  event_t current_event; };
+    /** \brief   current evnet that shall be handled
+     *
+     *  \details event may be spawned only in one of the state */
+    event_t current_event; };
 
 #endif // STATE_MACHINE_HPP

@@ -23,7 +23,7 @@ void bsp_leave_critical();
  *  \details you should guarantee that the character will be transmitted */
 void bsp_tx_char(char ch);
 
-/** \brief   receive char via service interface 
+/** \brief   receive char via service interface
  *  \details as the service interface is human readable console
  *           you can use zero as no character at present moment
  *  \details will be better if your implementation will be bufferized */

@@ -9,11 +9,11 @@
 
 class init_dependency : virtual public automatic_list<init_dependency>
 { public:
-  init_dependency(i_kernel_module& source, i_kernel_module& target)
-    : source(source), target(target) {}
+    init_dependency(i_kernel_module& source, i_kernel_module& target)
+      : source(source), target(target) {}
 
-  i_kernel_module& source;
-  i_kernel_module& target; };
+    i_kernel_module& source;
+    i_kernel_module& target; };
 
 #define DEPEND(source, target) \
   init_dep dependency_##__FILE__##__LINE__##(source, target);

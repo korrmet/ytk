@@ -10,27 +10,26 @@
 class i_shell_command : public virtual automatic_list<i_shell_command>
 { public:
 
-  /** \brief name of the command, standard null-terminated string */
-  const char* name;
+    /** \brief name of the command, standard null-terminated string */
+    const char* name;
 
-  /** \brief handle shell argument
-   *
-   *  \param arg     argument of the command
-   *  \param argsize size of the argument
-   *
-   *  \return result of handling
-   *  \retval true  argument handled
-   *  \retval false argument is not handled or it's invalid, execution of the
-   *                command stops */
-  virtual bool argument_handle(char* arg, uint32_t argsize) = 0;
+    /** \brief handle shell argument
+     *
+     *  \param arg     argument of the command
+     *  \param argsize size of the argument
+     *
+     *  \return result of handling
+     *  \retval true  argument handled
+     *  \retval false argument is not handled or it's invalid, execution of the
+     *                command stops */
+    virtual bool argument_handle(char* arg, uint32_t argsize) = 0;
 
-  /** \brief handle shell command
-   *
-   *  \return result of handing
-   *  \retval true  command is executed successfully
-   *  \retval false command is not executed of error occured */
-  virtual bool command_handle() = 0;
-};
+    /** \brief handle shell command
+     *
+     *  \return result of handing
+     *  \retval true  command is executed successfully
+     *  \retval false command is not executed of error occured */
+    virtual bool command_handle() = 0; };
 
 /** \brief   simple shell with support of the user commands
  *  \details this shell apply just simplest behavior of command line interface.
@@ -44,7 +43,6 @@ template <uint32_t VOLUME>
 class shell
 { public:
 
-  private:
-};
+  private: };
 
 #endif // SHELL_HPP

@@ -7,9 +7,8 @@
 template <typename TYPE>
 class linked_list
 { public:
-  linked_list() : next(nullptr) {}
+    linked_list() : next(nullptr) {}
 
-  TYPE* next;
-};
+    TYPE* next; };
 
 #endif // LINKED_LIST_HPP
