@@ -7,8 +7,13 @@
 #include <cstdint>
 #include "bsp/bsp.h"
 
+/** \brief size that disables limitation for print space size */
 #define PRINT_NO_LIMITS 0
+
+/** \brief standard spacer */
 #define STD_SPACER ' '
+
+/** \brief standard precision for print floating-point numbers */
 #define STD_PRECISION_DIGITS 2
 
 /** \brief left alignment */

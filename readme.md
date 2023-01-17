@@ -30,6 +30,12 @@ Asshole public licence: if you like this code, just tell your buddies about it o
 
 Yes, it's the full text of the licence. Simple, right?
 
+# Build #
+
+# Testing #
+
+To perform test the CppUTest package required.
+
 # Warning #
 
 This code is written in spare time, maybe it's not documented or tested properly, but I tried to make it usable and robust.

@@ -51,9 +51,7 @@ void print::print_string(char* str,
   char* _str = str;
   while (*_str) { actual_len++; str++; }
 
-  if (actual_len > len)
-  {
-  }
+  if (actual_len > len) { actual_len = len - 2; }
 
   uint32_t space = len - actual_len;
   uint32_t space_before = 0;
