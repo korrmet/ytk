@@ -2,13 +2,14 @@
  *  \brief implementation of better printf or cout replacement  */
 
 #include <cstdint>
+#include "common/errcode.hpp"
 #include "serialization/print.hpp"
 #include "bsp/bsp.h"
 
-print::print() : errcode(0), buffer(nullptr), size(0), counter(0) { }
+print::print() : errcode(ERR_OK), buffer(nullptr), size(0), counter(0) { }
 
-print::print(uint8_t* buffer, uint32_t size)
-  : errcode(0),
+print::print(char* buffer, uint32_t size)
+  : errcode(ERR_OK),
     buffer(buffer),
     size(size),
     counter(0)
@@ -82,5 +83,7 @@ void print::print_string(char* str,
 
   if (make_brackets) { tx(']'); } }
 
-// TODO: not finished, not handle bufferized output
-void print::tx(char ch) { bsp_tx_char(ch); }
+void print::tx(char ch)
+{ if (!buffer) { bsp_tx_char(ch); }
+  else if (counter < size) { buffer[counter] = ch; counter++; }
+  else { errcode = ERR_BUFFER_OVERFLOW; } }

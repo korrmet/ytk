@@ -12,6 +12,9 @@ endif
 
 OBJECTS = $(MODULES:=.o)
 
+DEPS = $(shell find -name "*.d")
+DEPFLAGS += -MMD
+
 all: format check test ytk.a docs
 
 ytk.a: $(OBJECTS)
@@ -50,7 +53,10 @@ TEST_OPTS += -c
 TESTS += tests/print/string.cpp.test
 
 .PHONY: clean format test
+
+ifeq ($(FAILED_TEST), Enable)
 .PRECIOUS: $(TESTS)
+endif
 
 test: $(TESTS)
 
@@ -58,7 +64,7 @@ tests/print/string.cpp.test: serialization/print.hpp
 tests/print/string.cpp.test: serialization/print.cpp
 tests/print/string.cpp.test: tests/print/string.cpp \
 	                           serialization/print.cpp
-	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS)
+	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
 ASTYLE_FLAGS += --style=pico
@@ -122,3 +128,5 @@ clean:
 	@rm -rf $(shell find -name "*.gcda")
 	@rm -rf $(shell find -name "*.gcno")
 	@rm -rf $(shell find -name "*.gcov")
+
+-include $(DEPS)

@@ -28,19 +28,15 @@
 /** \brief default alignment */
 #define STD_ALIGN ALIGN_LEFT
 
-// TODO: if field container overflows it should be placed inside square
-//       brackets
-
 /** \brief tool to formatted print to service interface or to buffer */
 class print
 { public:
 
     /** \brief constructor for printing in buffer
-     *  \TODO: make buffer as serializer and use it putchar-like functions
      *
      *  \param buffer pointer to byte array to print
      *  \param size   maximum available space to print */
-    print(uint8_t* buffer, uint32_t size);
+    print(char* buffer, uint32_t size);
 
     /** \brief generic constructor for printing to dsp console */
     print();
@@ -164,8 +160,13 @@ class print
     uint8_t errcode;
 
   private:
-    uint8_t* buffer;
+    /** \brief pointer to the buffer that used to print */
+    char* buffer;
+
+    /** \brief size of the buffer */
     uint32_t size;
+
+    /** \brief current position inside buffer */
     uint32_t counter;
 
     /** \brief actually prints the string
