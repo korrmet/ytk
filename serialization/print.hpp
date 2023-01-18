@@ -7,6 +7,10 @@
 #include <cstdint>
 #include "bsp/bsp.h"
 
+/** \defgroup print_flags
+ *  \brief    set of flags that used in print
+ *  \{ */
+
 /** \brief size that disables limitation for print space size */
 #define PRINT_NO_LIMITS 0
 
@@ -27,6 +31,8 @@
 
 /** \brief default alignment */
 #define STD_ALIGN ALIGN_LEFT
+
+/** \} */
 
 /** \brief tool to formatted print to service interface or to buffer */
 class print
