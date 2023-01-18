@@ -21,5 +21,24 @@ TEST(print_uint_tests, simple_print)
   CHECK(p.counter == 3);
   CHECK(p.errcode == ERR_OK); }
 
+TEST(print_uint_tests, maximum_value)
+{ char buffer[11] = { 0 };
+  print p(buffer, sizeof(buffer));
+  p.u(0xFFFFFFFF);
+  char expected[11] = { '4', '2', '9', '4', '9', '6', '7', '2', '9', '5', 0 };
+  MEMCMP_EQUAL(expected, buffer, sizeof(buffer));
+  CHECK(p.counter == 10);
+  CHECK(p.errcode == ERR_OK); }
+
+TEST(print_uint_tests, maximum_value_separated)
+{ char buffer[14] = { 0 };
+  print p(buffer, sizeof(buffer));
+  p.u(0xFFFFFFFF, PRINT_NO_LIMITS, 3);
+  char expected[14] =
+  { '4', ' ', '2', '9', '4', ' ', '9', '6', '7', ' ', '2', '9', '5', 0 };
+  MEMCMP_EQUAL(expected, buffer, sizeof(buffer));
+  CHECK(p.counter == 13);
+  CHECK(p.errcode == ERR_OK); }
+
 int main(int argc, char** argv)
 { return CommandLineTestRunner::RunAllTests(argc, argv); }

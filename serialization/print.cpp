@@ -102,7 +102,7 @@ static uint32_t pow10[10] =
 static char asciitab_uppercase[16] =
 { '0', '1', '2', '3', '4', '5', '6', '7',
   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
- 
+
 // TODO: uncomment to implement x()
 // /** \brief table for integer to char transform, lowercase variant */
 // static char asciitab_lowercase[16] =
@@ -133,20 +133,21 @@ print& print::u(uint32_t uint,
 
   // insert separators
   uint32_t actual_len = digit_counter;
+
   if (separate_num && separate_num < digit_counter)
   { uint32_t current_pos = digit_counter;
-    for (uint32_t i = digit_counter; i <= digit_counter; i--)
-    { if (i % separate_num)
-      { memcpy(&temp[current_pos],
-               &temp[current_pos + 1],
+
+    for (uint32_t i = 0; i < digit_counter; i++)
+    { if (i && (i % separate_num == 0))
+      { memcpy(&temp[current_pos + 1],
+               &temp[current_pos],
                actual_len - current_pos);
         temp[current_pos] = ' ';
-        actual_len++;
-        continue; }
+        actual_len++; }
+
       current_pos--; } }
 
   s(temp, len, align, spc);
-
   return *this; }
 
 void print::tx(char ch)

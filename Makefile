@@ -59,7 +59,7 @@ ifeq ($(FAILED_TEST), Enable)
 .PRECIOUS: $(TESTS)
 endif
 
-test: $(TESTS)
+test: clean $(TESTS)
 
 tests/print/string.cpp.test: tests/print/string.cpp \
 	                           serialization/print.cpp
