@@ -60,8 +60,6 @@ endif
 
 test: $(TESTS)
 
-tests/print/string.cpp.test: serialization/print.hpp
-tests/print/string.cpp.test: serialization/print.cpp
 tests/print/string.cpp.test: tests/print/string.cpp \
 	                           serialization/print.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
