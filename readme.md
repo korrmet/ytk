@@ -1,5 +1,4 @@
-# Ytk #
-toolkit for a small systems
+![](./logo_big.png "toolkit for a small systems")
 
 # Idea #
 

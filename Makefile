@@ -37,6 +37,7 @@ crc.o:
 
 docs:
 	@doxygen
+	@cp logo_big.png docs/html
 
 TEST_LIBS += -lCppUTest
 TEST_LIBS += -lCppUTestExt
