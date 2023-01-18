@@ -1,8 +1,6 @@
 #include <CppUTest/CommandLineTestRunner.h>
 #include <CppUTest/TestHarness.h>
-#include <CppUTest/UtestMacros.h>
 #include <CppUTestExt/MockSupport.h>
-#include <CppUTestExt/MockNamedValue.h>
 
 #include <cstring>
 #include "bsp/bsp.h"

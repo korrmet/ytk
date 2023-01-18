@@ -51,6 +51,7 @@ TEST_OPTS += -v
 TEST_OPTS += -c
 
 TESTS += tests/print/string.cpp.test
+TESTS += tests/print/uint.cpp.test
 
 .PHONY: clean format test
 
@@ -62,6 +63,11 @@ test: $(TESTS)
 
 tests/print/string.cpp.test: tests/print/string.cpp \
 	                           serialization/print.cpp
+	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
+	@./$@ $(TEST_OPTS)
+
+tests/print/uint.cpp.test: tests/print/uint.cpp \
+	                         serialization/print.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
@@ -123,8 +129,6 @@ clean:
 	@rm -rf docs 
 	@rm -rf $(shell find -name "*.test")
 	@rm -rf $(shell find -name "*.o")
-	@rm -rf $(shell find -name "*.gcda")
-	@rm -rf $(shell find -name "*.gcno")
-	@rm -rf $(shell find -name "*.gcov")
+	@rm -rf $(shell find -name "*.d")
 
 -include $(DEPS)

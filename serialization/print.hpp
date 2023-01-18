@@ -107,41 +107,49 @@ class print
 
     /** \brief print unsigned integer
      *
-     *  \param uint
-     *  \param separate_num
-     *  \param len
-     *  \param spc
+     *  \param uint         value to be printed
+     *  \param separate_num number characters between separator spaces
+     *                      \note 0 if you don't need any separator
+     *  \param len          length of space tor the value string
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
      *
      *  \return reference to the printing object */
     print& u(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& x(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& X(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& o(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& b(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& i(int32_t sint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              bool print_plus = false,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& f(float flt,
@@ -149,6 +157,7 @@ class print
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              bool print_plus = false,
+             uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
     print& p(void* ptr);

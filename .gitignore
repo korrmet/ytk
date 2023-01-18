@@ -4,3 +4,4 @@ docs
 *.gcov
 *.gcno
 *.gcda
+*.d
