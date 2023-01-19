@@ -19,6 +19,12 @@
 /** \brief somewhere buffer was overflowed */
 #define ERR_BUFFER_OVERFLOW 1
 
+/** \brief data wasn't passed check */
+#define ERR_INVALID_DATA 2
+
+/** \brief can't sign piece of data */
+#define ERR_NOSIGN 3
+
 /** \} */
 
 #endif // ERRCODE_HPP
