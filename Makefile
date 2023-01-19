@@ -53,6 +53,7 @@ TEST_OPTS += -c
 
 TESTS += tests/print/string.cpp.test
 TESTS += tests/print/uint.cpp.test
+TESTS += tests/containers/arrayed_buffer.cpp.test
 
 .PHONY: clean format test
 
@@ -69,6 +70,10 @@ tests/print/string.cpp.test: tests/print/string.cpp \
 
 tests/print/uint.cpp.test: tests/print/uint.cpp \
 	                         serialization/print.cpp
+	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
+	@./$@ $(TEST_OPTS)
+
+tests/containers/arrayed_buffer.cpp.test: tests/containers/arrayed_buffer.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
