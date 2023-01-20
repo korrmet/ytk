@@ -15,7 +15,9 @@ OBJECTS = $(MODULES:=.o)
 DEPS = $(shell find -name "*.d")
 DEPFLAGS += -MMD
 
-all: format check test ytk.a docs
+all: format check test ytk.a docs/html
+
+.PHONY: clean format test docs/html
 
 ytk.a: $(OBJECTS)
 	touch ytk.a
@@ -35,9 +37,11 @@ shell.o:
 crc.o:
 	touch crc.o
 
-docs:
+docs/html:
 	@doxygen
-	@cp logo_big.png docs/html
+	@mkdir -p docs/html/docs
+	@cp docs/logo_big.png docs/html/docs
+	@cp docs/library_structure.png docs/html/docs
 
 TEST_LIBS += -lCppUTest
 TEST_LIBS += -lCppUTestExt
@@ -52,11 +56,9 @@ TEST_FLAG += -ggdb
 TEST_OPTS += -v
 TEST_OPTS += -c
 
-TESTS += tests/print/string.cpp.test
-TESTS += tests/print/uint.cpp.test
-TESTS += tests/containers/arrayed_buffer.cpp.test
-
-.PHONY: clean format test
+TESTS += tests/print_string.cpp.test
+TESTS += tests/print_uint.cpp.test
+TESTS += tests/arrayed_buffer.cpp.test
 
 ifeq ($(FAILED_TEST), Enable)
 .PRECIOUS: $(TESTS)
@@ -64,17 +66,15 @@ endif
 
 test: clean $(TESTS)
 
-tests/print/string.cpp.test: tests/print/string.cpp \
-	                           serialization/print.cpp
+tests/print_string.cpp.test: tests/print_string.cpp io/print.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
-tests/print/uint.cpp.test: tests/print/uint.cpp \
-	                         serialization/print.cpp
+tests/print_uint.cpp.test: tests/print_uint.cpp io/print.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
-tests/containers/arrayed_buffer.cpp.test: tests/containers/arrayed_buffer.cpp
+tests/arrayed_buffer.cpp.test: tests/arrayed_buffer.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
@@ -134,7 +134,7 @@ check:
 clean_all: clean clean_docs
 
 clean_docs:
-	@rm -rf docs
+	@rm -rf docs/html
 
 clean:
 	@rm -rf ytk.a 

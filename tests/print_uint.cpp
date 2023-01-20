@@ -2,8 +2,8 @@
 #include <CppUTest/TestHarness.h>
 #include <CppUTestExt/MockSupport.h>
 
-#include "serialization/print.hpp"
-#include "common/errcode.hpp"
+#include "io/print.hpp"
+#include "core/errcode.hpp"
 #include "bsp/bsp.h"
 
 void bsp_tx_char(char ch) {}

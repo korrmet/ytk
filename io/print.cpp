@@ -3,8 +3,8 @@
 
 #include <cstdint>
 #include <cstring>
-#include "common/errcode.hpp"
-#include "serialization/print.hpp"
+#include "core/errcode.hpp"
+#include "io/print.hpp"
 #include "bsp/bsp.h"
 
 print::print() : errcode(ERR_OK), buffer(nullptr), size(0), counter(0) { }

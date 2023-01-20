@@ -5,7 +5,7 @@
 #define INIT_HPP
 
 #include "containers/automatic_list.hpp"
-#include "kernel/module.hpp"
+#include "core/module.hpp"
 
 class init_dependency : virtual public automatic_list<init_dependency>
 { public:

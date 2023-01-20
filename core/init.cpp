@@ -4,8 +4,8 @@
 #include <cstdint>
 #include "containers/automatic_list.hpp"
 #include "containers/linked_list.hpp"
-#include "kernel/init.hpp"
-#include "kernel/module.hpp"
+#include "core/init.hpp"
+#include "core/module.hpp"
 
 void init_module(i_kernel_module& mod, uint32_t ticks)
 { if (mod.ready) { return; }

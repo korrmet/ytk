@@ -4,8 +4,8 @@
 
 #include <cstring>
 #include "bsp/bsp.h"
-#include "serialization/print.hpp"
-#include "common/errcode.hpp"
+#include "io/print.hpp"
+#include "core/errcode.hpp"
 
 #include <iostream>
 char output_buffer[80] = { 0 };
