@@ -127,30 +127,81 @@ class print
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief   print unsigned integer in hex
+     *  \details lowercase variant
+     *
+     *  \param uint         value to be printed
+     *  \param len          length of space for the value sting
+     *  \param separate_num number of characters between separator spaces
+     *                      \note 0 if you don't need any separator
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& x(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief   print unsigned integer in hex
+     *  \details uppercase variant
+     *
+     *  \param uint         value to be printed
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *                      \note 0 if you don't need any separator
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& X(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief   print unsigned integer in octal
+     *
+     *  \param uint         value to be printed
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *                      \note 0 if you don't need any separator
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& o(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief print unsigned in as binary
+     *
+     *  \param uint         value to be printed
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& b(uint32_t uint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief print signed integer
+     *
+     *  \param sint         value to be printed
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *  \param print_plus   turn on explicit plus
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& i(int32_t sint,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
@@ -158,6 +209,17 @@ class print
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief print floating point value
+     *
+     *  \param flt          floating point value
+     *  \param prec         precision, volume of numbers after floating point
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *  \param print_plus   turn on explicit plus
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& f(float flt,
              uint32_t prec = STD_PRECISION_DIGITS,
              uint32_t len = PRINT_NO_LIMITS,
@@ -166,12 +228,26 @@ class print
              uint8_t align = STD_ALIGN,
              char spc = STD_SPACER);
 
+    /** \brief   print pointer
+     *  \details print memory address in hex between '<' and '>' characters
+     *  \warning result size is machine dependent
+     *
+     *  \param ptr          pointer that should be printed
+     *  \param len          length of space for the value string
+     *  \param separate_num number of characters between separator spaces
+     *  \param align        alignment inside printing space
+     *  \param spc          free space filler
+     *
+     *  \return reference to the printing object */
     print& p(void* ptr);
 
     /** \brief terminates the string by null
      *  \note  main purpose of using it is printing in buffer */
     print& t();
 
+    /** \brief last error code
+     *  \param if this variable would be not equal ERR_OK, the execution would
+     *         be canceled */
     uint8_t errcode;
 
   private:

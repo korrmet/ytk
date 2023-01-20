@@ -20,28 +20,36 @@ print& print::operator()(const char* str,
                          uint32_t len,
                          uint8_t align,
                          char spc)
-{ print_string((char*)str, len, align, spc);
+{ if (errcode) { return *this; }
+
+  print_string((char*)str, len, align, spc);
   return *this; }
 
 print& print::operator()(char* str,
                          uint32_t len,
                          uint8_t align,
                          char spc)
-{ print_string((char*)str, len, align, spc);
+{ if (errcode) { return *this; }
+
+  print_string((char*)str, len, align, spc);
   return *this; }
 
 print& print::s(const char* str,
                 uint32_t len,
                 uint8_t align,
                 char spc)
-{ print_string((char*)str, len, align, spc);
+{ if (errcode) { return *this; }
+
+  print_string((char*)str, len, align, spc);
   return *this; }
 
 print& print::s(char* str,
                 uint32_t len,
                 uint8_t align,
                 char spc)
-{ print_string((char*)str, len, align, spc);
+{ if (errcode) { return *this; }
+
+  print_string((char*)str, len, align, spc);
   return *this; }
 
 void print::print_string(char* str,
@@ -114,7 +122,9 @@ print& print::u(uint32_t uint,
                 uint8_t separate_num,
                 uint8_t align,
                 char spc)
-{ uint32_t rest = uint;
+{ if (errcode) { return *this; }
+
+  uint32_t rest = uint;
   uint8_t digit_counter = 0;
   uint8_t current_digit = 0;
   char temp[9 + 9] = { 0 };
