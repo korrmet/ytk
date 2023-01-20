@@ -43,6 +43,7 @@ TEST_LIBS += -lCppUTest
 TEST_LIBS += -lCppUTestExt
 
 TEST_FLAG += -Wall
+TEST_FLAG += -pedantic
 TEST_FLAG += -Werror
 TEST_FLAG += -Dprivate=public
 TEST_FLAG += -g3
@@ -130,9 +131,13 @@ CHECK_SRCS = $(ASTYLE_SRCS)
 check:
 	@cppcheck $(CHECK_FLAGS) $(INCLUDES) $(CHECK_SRCS)
 
+clean_all: clean clean_docs
+
+clean_docs:
+	@rm -rf docs
+
 clean:
 	@rm -rf ytk.a 
-	@rm -rf docs 
 	@rm -rf $(shell find -name "*.test")
 	@rm -rf $(shell find -name "*.o")
 	@rm -rf $(shell find -name "*.d")
