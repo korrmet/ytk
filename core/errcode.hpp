@@ -25,6 +25,9 @@
 /** \brief can't sign piece of data */
 #define ERR_NOSIGN 3
 
+/** \brief invalid argiment given */
+#define ERR_INVALID_ARGUMENT 4
+
 /** \} */
 
 #endif // ERRCODE_HPP

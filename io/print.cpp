@@ -111,11 +111,10 @@ static char asciitab_uppercase[16] =
 { '0', '1', '2', '3', '4', '5', '6', '7',
   '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-// TODO: uncomment to implement x()
-// /** \brief table for integer to char transform, lowercase variant */
-// static char asciitab_lowercase[16] =
-// { '0', '1', '2', '3', '4', '5', '6', '7',
-//   '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+/** \brief table for integer to char transform, lowercase variant */
+static char asciitab_lowercase[16] =
+{ '0', '1', '2', '3', '4', '5', '6', '7',
+  '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
 print& print::u(uint32_t uint,
                 uint32_t len,
@@ -154,6 +153,44 @@ print& print::u(uint32_t uint,
                actual_len - current_pos);
         temp[current_pos] = ' ';
         actual_len++; }
+
+      current_pos--; } }
+
+  s(temp, len, align, spc);
+  return *this; }
+
+/** \brief extracts one hexadecimal digit from value
+ *
+ *  \param value target value
+ *  \param pos   number of digit to be extracted */
+#define HEX_DIGIT(value, pos) \
+((value & ((uint32_t)0x0F << (pos * 4))) >> (pos * 4))
+
+print& print::x(uint32_t uint,
+                uint8_t digits,
+                uint32_t len,
+                uint8_t separate_num,
+                uint8_t align,
+                char spc)
+{ if (errcode) { return *this; }
+
+  if (!digits || !len) { errcode = ERR_INVALID_ARGUMENT; return *this; }
+
+  char temp[8 * 2] = { 0 };
+
+  for (uint8_t i = 0; i < digits; i++)
+  { temp[i] = asciitab_lowercase[HEX_DIGIT(uint, i)]; }
+
+  // insert separators
+  if (separate_num && separate_num < digits)
+  { uint32_t current_pos = digits;
+
+    for (uint32_t i = 0; i < digits; i++)
+    { if (i && (i % separate_num == 0))
+      { memcpy(&temp[current_pos + 1],
+               &temp[current_pos],
+               digits - current_pos);
+        temp[current_pos] = ' '; }
 
       current_pos--; } }
 

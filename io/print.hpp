@@ -131,6 +131,7 @@ class print
      *  \details lowercase variant
      *
      *  \param uint         value to be printed
+     *  \param digits       number of digits to print
      *  \param len          length of space for the value sting
      *  \param separate_num number of characters between separator spaces
      *                      \note 0 if you don't need any separator
@@ -139,6 +140,7 @@ class print
      *
      *  \return reference to the printing object */
     print& x(uint32_t uint,
+             uint8_t digits = 32,
              uint32_t len = PRINT_NO_LIMITS,
              uint8_t separate_num = 0,
              uint8_t align = STD_ALIGN,
