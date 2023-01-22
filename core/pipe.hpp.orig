@@ -57,7 +57,7 @@ template <uint32_t VOLUME>
 class pipe : public i_pipe
 { public:
     /** \brief write data chunk in pipe
-     *
+     * 
      *  \param data pointer to data to write
      *  \param size size of data to write
      *

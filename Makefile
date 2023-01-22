@@ -40,8 +40,7 @@ crc.o:
 docs/html:
 	@doxygen
 	@mkdir -p docs/html/docs
-	@cp docs/logo_big.png docs/html/docs
-	@cp docs/library_structure.png docs/html/docs
+	@cp docs/*.png docs/html/docs
 
 TEST_LIBS += -lCppUTest
 TEST_LIBS += -lCppUTestExt
