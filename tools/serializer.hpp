@@ -37,17 +37,50 @@ class serializer
     /** \brief changes byte order (host to network or network to host) */
     serializer& hn();
 
+    /** \brief add uint8_t to sequence
+     *
+     *  \param val value to be added
+     *
+     *  \return reference to the current serializer object */
     serializer& u8(uint8_t val);
 
+    /** \brief add uint16_t to sequence
+     *
+     *  \parm val value to be added
+     *
+     *  \return reference to the current serializer object */
     serializer& u16(uint16_t val);
 
+    /** \brief add uint32_t to sequence
+     *
+     *  \param val value to be added
+     *
+     *  \return reference to the current serializer object */
     serializer& u32(uint32_t val);
 
-
+    /** \brief add array to the sequence
+     *
+     *  \param buf pointer to the buffer that should be added
+     *  \param len size of the buffer
+     *
+     *  \return reference to the current serializer object */
     serializer& a(void* buf, uint32_t len);
 
+    /** \brief add c-string to the sequence
+     *
+     *  \param str pointer to the null-terminated string literal
+     *  \param len maximum size of the string
+     *
+     *  \return reference to the current serializer object */
     serializer& s(const char* str, uint32_t len = NO_LIMITS);
-    serializer& s(char* std, uint32_t len = NO_LIMITS);
+
+    /** \brief add c-string to the sequence
+     *
+     *  \param str pointer to the string buffer
+     *  \param len maximum size of the string
+     *
+     *  \return reference to the current serializer object */
+    serializer& s(char* str, uint32_t len = NO_LIMITS);
 
     /** \brief   pointer to function that perform data signification
      *  \details serializer provide piece of data that can be used without
@@ -64,15 +97,50 @@ class serializer
      *  \retval true  data signed
      *  \retval false error occured, data may be corrupted */
     typedef bool (*significator_t)(void* arg, void* start, uint32_t len);
+
+    /** \brief make sign of the sequence
+     *
+     *  \param sign pointer to significator function
+     *  \param arg  user argument that will be passed into significator
+     *
+     *  \return reference to the current serializer object */
     serializer& sign(significator_t sign, void* arg);
 
+    /** \brief move through the sequence forwards or backwards
+     *
+     *  \param step number and direction of steps according the current point
+     *
+     *  \return reference to the current serializer object */
     serializer& seek(int32_t step);
 
+    /** \brief insert single bit
+     *
+     *  \param bit bit value
+     *
+     *  \return reference to the current serializer object */
+    serializer& b(bool bit);
+
+    /** \brief insert set of bits less or equal one bit
+     *
+     *  \param bitfield set of bits
+     *  \param size     length of the set of bits
+     *
+     *  \return reference to the current serializer object */
+    serializer& bf(uint8_t bitfield, uint8_t size);
+
+    /** \brief last error code */
     uint8_t errcode;
 
   private:
+    /** \brief pointer to the external buffer where the serial data would be
+     *         placed */
     void* buffer;
-    uint32_t buffer_size; };
+
+    /** \brief size of the external buffer */
+    uint32_t buffer_size;
+
+    /** \brief current bit */
+    uint8_t bit_count; };
 
 class deserializer
 { public:
