@@ -6,3 +6,5 @@ docs/html
 *.gcda
 *.d
 *.a
+*.dtmp
+*.orig
