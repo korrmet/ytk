@@ -30,7 +30,7 @@ Another key concept is modularity. Tiny code blocks managed by state machines ma
 
 I have seen many projects with common problem: initialization chaos. Ytk has initialization subsystem that includes dependencies and semi-parallel execution. You can easily make dependency graphs and initialization system guarantee the order of execution of procedures. As this system is not fast there is the way to make manual initialization routine.
 
-## Pipelined architecture ##
+## Pipelined Architecture ##
 
 After your project becomes large it required some kind of system architecture. Most embedded devices I seen were data capture systems. It may have diffirent names or not so sommon behaviour for user but it's structure commonly just tool to capture data, store it inside, may be perform some calculations and put to the user. Pipelined architecture almost always perfectly fits for this purposes. Typical embedded device functional block diagram is shown on a figure below.
 
@@ -54,7 +54,27 @@ So what is module? It's just a cpp class that has behaviour and set of inputs an
 
 Inputs and outputs is connection points to place your module in your project via pipelines. Pipelines are similar to the wires in physical distributed systems.
 
-![](./docs/pipeline_connestion.png "Pipeline connection")
+![](./docs/pipeline_connection.png "Pipeline connection")
+
+## Service Orientied Architecture and Distributed Systems ##
+
+This concept is another view on the modularity problem and how the modules interact together. This architecture can be combined with the pipelined architecture, but in doesn't replace it. It just another way to code organization that helps you to make system maintainance easier and efficent. Service Orientied Architecture says that there is a set of modules, thath interact together using common mechanism and some modules would be servers and some would be clients. This mechanism is System Bus. System Bus provides data exchange mechanism for whole system with global address space. It utilizes simple serial interface to exchange data between devices and inner device loop.
+
+![](./docs/system_bus_overview.png "System Bus overview")
+
+Nodes are entry point to the bus. It have their own address, method to send messages to another nodes called signel, and method to catch and handle signals called handler. Address space can contain 256 nodes.
+
+![](./docs/system_bus_node.png "System Bus Node structure")
+
+![](./docs/system_bus_interaction.png "System Bus interaction")
+
+Devices in the bus are connected in the loop that can contains maximum 16 devices. Message format is next:
+
+![](./docs/system_bus_message.png "System Bus message")
+
+![](./docs/system_bus_propagation.png "System Bus propagation")
+
+Every node whould have an unique address. Messages propagates between devices with decreasing TTL field. Message with TTL == 0 will not be retransmitted. Also there is internal loop like loopback in TCP/IP stacks.
 
 # Licence #
 
