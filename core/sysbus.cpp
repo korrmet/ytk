@@ -4,92 +4,104 @@
 #include <cstdint>
 #include "bsp/bsp.h"
 #include "containers/arrayed_buffer.hpp"
+#include "containers/automatic_list.hpp"
 #include "core/sysbus.hpp"
 #include "tools/serializer.hpp"
 #include "core/errcode.hpp"
 
-#define MAX_SIZE    64
-#define HEADER_SIZE  5
-#define CKSUM_SIZE   2
+/** \brief maximum length of the message */
+#define MESSAGE_SIZE 19
 
-/** \todo incomplete */
-static bool sign_crc(void* arg, void* start, uint32_t len)
-{ return false; }
+/** \brief   transmit function for the system bus
+ *  \details adapter for bsp function
+ *
+ *  \param arg  not used
+ *  \param byte byte to send on a system bus */
+static void sysbus_tx(void* arg, uint8_t byte) { bsp_sysbus_tx(byte); }
 
-static void tx(void* arg, uint8_t byte) { bsp_sysbus_tx(byte); }
+/** \brief significator for system bus protocol
+ *
+ *  \param arg   not used
+ *  \param start start of the message to sign
+ *  \param len   length of the message */
+bool sysbus_sign(void* arg, void* start, uint32_t len) { return true; }
 
-class sysbus_root
-{ public:
-    uint16_t dst;
-    uint16_t src;
-    uint8_t len;
-    bool rw;
-    bool rq;
+/** \brief retranslate message to external bus
+ *  
+ *  \param data pointer to the data that should be sent
+ *  \param size size of the data that should be sent
+ *  \param src  source node on the bus
+ *  \param dst  destination node on the bus
+ *  \param ttl  time to live of the message */
+static void retranslate(uint8_t* data,
+                        uint8_t size,
+                        uint8_t src,
+                        uint8_t dst,
+                        uint8_t ttl)
+{ if (!data) { return; }
 
-    void input(uint8_t byte)
-    { if (!rx_buffer.push_back(byte))
-      { rx_buffer.shift_left(1);
-        rx_buffer.push_back(byte); }
+  if (size > 15) { return; }
 
-      // try deserialize
-    }
+  uint8_t tx_mess[MESSAGE_SIZE];
+  serializer send_stream(tx_mess, sizeof(tx_mess));
+  send_stream
+  .u8(dst).u8(src).bf(size, 4).bf(ttl, 4).a(data, size).sign(sysbus_sign);
 
-    bool poll_locals()
-    { i_sysbus_node* nodes = automatic_list<i_sysbus_node>::root;
+  for (uint32_t i = 0; i < send_stream.pos; i++)
+  { bsp_sysbus_tx(tx_mess[i]); } }
 
-      while (nodes)
-      { if (nodes->addr == dst)
-        { nodes->handler(&rx_buffer.mem[HEADER_SIZE], len, src, rw, rq);
-          return true; }
+/** \brief   sends message
+ *  \details firt loopback would be shanned for recepients and if there
+ *           is no any recepient it would be sent to the bus
+ *
+ *  \param data pointer to the data that should be sent
+ *  \param size size of the data that should be sent
+ *  \param src  source node on the bus
+ *  \param dst  destination node on the bus
+ *  \param ttl  time to live of the message */
+static void send_signal(uint8_t* data,
+                        uint8_t size,
+                        uint8_t src,
+                        uint8_t dst,
+                        uint8_t ttl)
+{ if (!data) { return; }
 
-        nodes = nodes->next; }
+  if (size > 15) { return; }
 
-      return false; }
+  if (!ttl) { return; }
 
-    void retranslate()
-    { uint8_t current_byte = 0;
+  i_sysbus_node* loopback = automatic_list<i_sysbus_node>::root;
 
-      while (rx_buffer.fetch_back(current_byte))
-      { rx_buffer.pop_back();
-        bsp_sysbus_tx(current_byte); } }
+  while (loopback)
+  { if (loopback->addr == dst)
+    { loopback->handler(data, size, src);
+      return; }
 
-    void send(void* data, uint8_t size)
-    { serializer serial(tx, nullptr);
-      serial.u8(dst);
-      serial.u8(src);
-      serial.bf(size, 6);
-      serial.b(rw);
-      serial.b(rq);
-      serial.a(data, size);
-      serial.sign(sign_crc, nullptr); }
+    loopback = loopback->next; }
 
-  private:
-    arrayed_buffer < uint8_t, MAX_SIZE + HEADER_SIZE + CKSUM_SIZE > rx_buffer;
+  retranslate(data, size, src, dst, ttl - 1); }
 
-} sb_root;
+/** \brief implementation of bsp sysbus callback
+ *
+ *  \param byte received byte */
+void bsp_sysbus_rx_cb(uint8_t byte)
+{ static uint8_t rx_message[MESSAGE_SIZE];
+  static deserializer input_stream(rx_message, sizeof(rx_message));
+  input_stream.put(&byte, 1);
 
-void bsp_sysbus_rx_cb(uint8_t byte) { sb_root.input(byte); }
+  if (input_stream.validate())
+  { uint8_t src = 0;
+    uint8_t dst = 0;
+    uint8_t ttl = 0;
+    uint8_t size = 0;
+    uint8_t* data = nullptr;
+    input_stream.pos = 0;
+    input_stream.u8(dst).u8(src).bf(size, 4).bf(ttl, 4);
+    data = &rx_message[input_stream.pos];
+    send_signal(data, size, src, dst, ttl); } }
 
-static uint8_t tx_buffer[MAX_SIZE + HEADER_SIZE];
-
-bool i_sysbus_node::signal(uint8_t* data,
+void i_sysbus_node::signal(uint8_t* data,
                            uint8_t size,
-                           uint16_t dst,
-                           bool rw,
-                           bool rq)
-{ if (!data) { return false; }
-
-  if (!size) { return false; }
-
-  if (size > MAX_SIZE) { return false; }
-
-  sb_root.len = size;
-  sb_root.src = addr;
-  sb_root.dst = dst;
-  sb_root.rw = rw;
-  sb_root.rq = rq;
-
-  if (sb_root.poll_locals()) { return true; }
-
-  sb_root.retranslate();
-  return true; }
+                           uint8_t dst,
+                           uint8_t ttl)
+{ send_signal(data, size, addr, dst, ttl); }
