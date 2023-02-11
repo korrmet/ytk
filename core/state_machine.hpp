@@ -27,15 +27,10 @@
 template <uint32_t VOLUME>
 class state_machine
 { public:
-    /** \brief   state type
-     *  \details make your own states using define or enum mechanisms, it
-     *           will be implicitly casted to this type */
-    typedef uint32_t state_t;
-
-    /** \brief   event type
-     *  \details make your own events using define or enum mechanisms, it
-     *           will be implicitly casted to this type */
-    typedef uint32_t event_t;
+    explicit state_machine(uint32_t state, uint32_t event)
+      : current_state(state),
+        current_event(event)
+    {}
 
     /** \brief handle all active events and after that handle current state */
     void machine_step()
@@ -48,22 +43,22 @@ class state_machine
     /** \brief this method must contain all of the state handlers
      *
      *  \param state current state that should be handled */
-    virtual void state_handler(state_t state) = 0;
+    virtual void state_handler(uint32_t state) = 0;
 
     /** \brief this method must contain all of the event handlers
      *
      *  \param event current event that should be handled */
-    virtual void event_handler(event_t event) = 0;
+    virtual void event_handler(uint32_t event) = 0;
 
   private:
     /** \brief   current operating state
      *  \details state may be switched in event only. events may be propogated
      *           in states or outside with method add_event() */
-    state_t current_state;
+    uint32_t current_state;
 
     /** \brief   current evnet that shall be handled
      *
      *  \details event may be spawned only in one of the state */
-    event_t current_event; };
+    uint32_t current_event; };
 
 #endif // STATE_MACHINE_HPP

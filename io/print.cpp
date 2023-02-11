@@ -125,12 +125,12 @@ print& print::u(uint32_t uint,
 
   uint32_t rest = uint;
   uint8_t digit_counter = 0;
-  uint8_t current_digit = 0;
   char temp[9 + 9] = { 0 };
   bool first_significant_arrived = false;
 
   for (uint8_t i = 9; i <= 9; i--)
-  { current_digit = rest / pow10[i];
+  { uint8_t current_digit = 0;
+    current_digit = rest / pow10[i];
     rest -= current_digit * pow10[i];
 
     if (current_digit) { first_significant_arrived = true; }

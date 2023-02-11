@@ -120,6 +120,7 @@ CHECK_FLAGS += --std=c++17
 CHECK_FLAGS += --report-progress
 CHECK_FLAGS += --suppress=missingIncludeSystem
 CHECK_FLAGS += --suppress=cstyleCast
+CHECK_FLAGS += --inline-suppr
 ifeq ($(BUGHUNT), Enable)
 CHECK_FLAGS += --bug-hunting
 endif

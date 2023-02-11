@@ -7,22 +7,22 @@
 
 #include <cstdint>
 
-/** \brief   container with extra tools that ease using array and you still able
- *           to use it as regular array;
- *  \details front of the buffer has index 0, back is the last element that
+/** \brief   container with extra tools that ease using arrays and you still
+ *           able to use it as regular array
+ *  \details use an external memory to operate
+ *  \details front of the buffer has index 0, bask is the last element that
  *           contains actual data. this container controls it's fullness and
- *           note you if any error occured.
+ *           notify you if any error occured
  *
- *  \todo    make methods for multiple elements
- *
- *  \tparam TYPE   type of elements of array
- *  \tparam VOLUME number of elements in array */
-template <typename TYPE, uint32_t VOLUME>
+ *  \tparam TYPE type of the elementf of the array */
+template <typename TYPE>
 class arrayed_buffer
 { public:
-    arrayed_buffer()
-      : used(0)
-    { }
+    explicit arrayed_buffer(TYPE* mem, uint32_t volume)
+      : used(0),
+        mem(mem),
+        mem_size(volume)
+    {}
 
     /** \brief inset one element in front of an array
      *
@@ -32,12 +32,15 @@ class arrayed_buffer
      *  \retval true  element successfully inserted
      *  \retval false error occured, maybe buffer is overflowed */
     bool push_front(TYPE data)
-    { if (used >= VOLUME) { return false; }
+    { if (used >= mem_size) { return false; }
 
       shift_right(1);
       mem[0] = data;
       used++;
       return true; }
+
+    /** \brief currently used memory */
+    uint32_t used;
 
     /** \brief insert one element in front of an array
      *
@@ -47,8 +50,10 @@ class arrayed_buffer
      *  \retval true  element successfully inserted
      *  \retval false error occured, maybe buffer is overflowed or null
      *                pointer given */
-    bool push_front(TYPE* data)
-    { if (used >= VOLUME) { return false; }
+    bool push_front(const TYPE* data)
+    { if (!data) { return false; }
+
+      if (used >= mem_size) { return false; }
 
       shift_right(1);
       mem[0] = *data;
@@ -68,10 +73,12 @@ class arrayed_buffer
 
     /** \brief copy element in front of the array
      *
+     *  \param buf reference to the buffer for the requested element
+     *
      *  \return result of fetching
      *  \retval true  element copied
      *  \retval false error occured, maybe buffer is empty */
-    bool fetch_front(TYPE& buf)
+    bool fetch_front(TYPE& buf) const
     { if (!used) { return false; }
 
       buf = mem[0];
@@ -85,7 +92,7 @@ class arrayed_buffer
      *  \retval true  element added
      *  \retval false error occure, maybe buffer is full */
     bool push_back(TYPE data)
-    { if (used >= VOLUME) { return false; }
+    { if (used >= mem_size) { return false; }
 
       mem[used] = data;
       used++;
@@ -99,8 +106,10 @@ class arrayed_buffer
      *  \retval true  element added
      *  \retval false error occured, mybe buffer is full or null pointer
      *                given */
-    bool push_back(TYPE* data)
-    { if (used >= VOLUME) { return false; }
+    bool push_back(const TYPE* data)
+    { if (!data) { return false; }
+
+      if (used >= mem_size) { return false; }
 
       mem[used] = *data;
       used++;
@@ -124,25 +133,10 @@ class arrayed_buffer
      *  \return result of fetching
      *  \retval true  element copied
      *  \retval false error occured, maybe buffer is empty */
-    bool fetch_back(TYPE& buf)
+    bool fetch_back(TYPE& buf) const
     { if (!used) { return false; }
 
       buf = mem[used - 1];
-      return true; }
-
-    /** \brief copy random element of the array
-     *
-     *  \param buf reference to the data buffer to store element
-     *  \param num index of the element inside array that should be fetched
-     *
-     *  \return result of fetching
-     *  \retval true  element copied
-     *  \retval false error occured, maybe buffer is empty or incorrect index
-     *                given */
-    bool fetch(TYPE& buf, uint32_t num)
-    { if (num >= used) { return false; }
-
-      buf = mem[num];
       return true; }
 
     /** \brief insert element in random position of the array
@@ -154,10 +148,10 @@ class arrayed_buffer
      *  \retval true  element inserted
      *  \retval false error occured, maybe buffer is full or incorrect index
      *                given */
-    bool insert(TYPE& data, uint32_t pos)
-    { if (pos >= used) { return false; }
+    bool insert(const TYPE& data, uint32_t pos)
+    { if (pos >=  used) { return false; }
 
-      if (used >= VOLUME) { return false; }
+      if (used >= mem_size) { return false; }
 
       shift_right(1, pos);
       mem[pos] = data;
@@ -173,28 +167,21 @@ class arrayed_buffer
      *  \retval true  element inserted
      *  \retval false error occured, maybe buffer is full or incorrect index
      *                given of null pointer given */
-    bool insert(TYPE* data, uint32_t pos)
+    bool insert(const TYPE* data, uint32_t pos)
     { if (!data) { return false; }
 
       if (pos >= used) { return false; }
 
-      if (used >= VOLUME) { return false; }
+      if (used >= mem_size) { return false; }
 
       shift_right(1, pos);
       mem[pos] = *data;
       used++;
       return true; }
 
-    /** \brief reset buffer */
+    /** \brief reset the buffer */
     void reset() { used = 0; }
 
-    /** \brief memory that buffer use to store data */
-    TYPE mem[VOLUME];
-
-    /** \brief currently used memory volume */
-    uint32_t used;
-
-  private:
     /** \brief shifts data in the array left
      *
      *  \param num number of shifts
@@ -228,6 +215,33 @@ class arrayed_buffer
       for (uint32_t i = used - 1; i >= pos + num; i--)
       { mem[i] = mem[i - num]; }
 
-      return true; } };
+      return true; }
+
+  private:
+    /** \brief external memory that this buffer will manage */
+    TYPE* mem;
+
+    /** \brief size of the external memory */
+    uint32_t mem_size; };
+
+/** \brief   container with extra tools that ease using array and you still able
+ *           to use it as regular array;
+ *  \details contains its own memory
+ *  \details front of the buffer has index 0, back is the last element that
+ *           contains actual data. this container controls it's fullness and
+ *           note you if any error occured.
+ *
+ *  \tparam TYPE   type of elements of array
+ *  \tparam VOLUME number of elements in array */
+template <typename TYPE, uint32_t VOLUME>
+class arrayed_buffer_static : public arrayed_buffer<TYPE>
+{ public:
+    // cppcheck-suppress uninitMemberVar
+    arrayed_buffer_static()
+      : arrayed_buffer<TYPE>(memory, VOLUME)
+    {}
+
+    /** \brief memory that buffer manage */
+    TYPE memory[VOLUME]; };
 
 #endif // ARRAYED_BUFFER_HPP

@@ -31,7 +31,7 @@ class circular_buffer
      *  \return adding result
      *  \retval true  value was added
      *  \retval false value was not added */
-    bool push_head(TYPE& val)
+    bool push_head(const TYPE& val)
     { if (fullness >= VOLUME) { return false; }
 
       bsp_enter_critical();
@@ -50,7 +50,7 @@ class circular_buffer
      *  \return adding result
      *  \retval true  value was added
      *  \retval false value was not added */
-    bool push_head(TYPE* val)
+    bool push_head(const TYPE* val)
     { if (fullness >= VOLUME) { return false; }
 
       bsp_enter_critical();
@@ -95,7 +95,7 @@ class circular_buffer
      *  \return result of addition
      *  \retval true  value is added
      *  \retval false value is not added (no place to add) */
-    bool push_tail(TYPE& val)
+    bool push_tail(const TYPE& val)
     { if (fullness >= VOLUME) { return false; }
 
       bsp_enter_critical();
@@ -114,7 +114,7 @@ class circular_buffer
      *  \return result of addition
      *  \retval true  value is added
      *  \retval false value is not added */
-    bool push_tail(TYPE* val)
+    bool push_tail(const TYPE* val)
     { if (fullness >= VOLUME) { return false; }
 
       bsp_enter_critical();
@@ -155,12 +155,12 @@ class circular_buffer
     /** \brief returns memory volume that is already used
      *
      *  \return number of elements */
-    uint32_t memory_used() { return fullness; }
+    uint32_t memory_used() const { return fullness; }
 
     /** \brief returns free memory volume
      *
      *  \return number of elements */
-    uint32_t memory_available() { return VOLUME - fullness; }
+    uint32_t memory_available() const { return VOLUME - fullness; }
 
   private:
     /** \brief pointer to the memory that this buffer serves */

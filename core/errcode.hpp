@@ -28,6 +28,11 @@
 /** \brief invalid argiment given */
 #define ERR_INVALID_ARGUMENT 4
 
+/** \brief not ready to process the requested operation */
+#define ERR_NOT_READY 5
+
+/** \brief trying to access area that not belong to buffer */
+#define ERR_BUFFER_OVERRUN 6
 /** \} */
 
 #endif // ERRCODE_HPP
