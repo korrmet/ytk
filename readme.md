@@ -76,6 +76,64 @@ Devices in the bus are connected in the loop that can contains maximum 16 device
 
 Every node whould have an unique address. Messages propagates between devices with decreasing TTL field. Message with TTL == 0 will not be retransmitted. Also there is internal loop like loopback in TCP/IP stacks.
 
+## Data Exchange Protocols ##
+
+Connecting to another device with its own wired communication protocol is a common task in the worl of embedded systems. In fact, a huge part of embedded systems are data acquisition systems that simply collect data from several third-party devices, convert it into another representation, and send it to a compute module or desktop PC. Sometimes they accumulate the collected data in their internal memory. Every project I've seen has a terrible and oversized part of the data exchange code. Each communication protocol was written in its own stype, with it's own and unique approach, and this practice still seems to be normal. But, in my opinion, this is wrong, because in fact most of protocols that I have seen have a fairly similar structure. I sincerely believe that the individuality of each communication process is greatly overestimated, and the set of tools in this project can facilitate the development of the communication part of yout project.
+
+There are several ways to implement the data protocol, but at the moment I can only provide one of them. This approach doesn't promise minimal footprint or extraordinary speed, but is not the worst by these metrics, and also increases the speed of implementation and makes the behaviour predictable and stable.
+
+Typically, devices interact with messages that have predictable boundaries and order of exchange. In most cases, the message begins with a header, which may describe the message type, adderssing, total length, etc. The message continues with payload data, which may in fact be a diffirent protocol or format. Finally, the messages may be signed in some way, but this is usually a variant of the checksum or an explicit terminating character. Sometimes the message ends with just a pause. At the lower leverl, the message is a seguence of data fields. If we dig a little deeper, we can see thet these fields are a sequence of bytes.
+
+Protocol implementation consists of several parts:
+
+* part that recognize input stream, called parser,
+
+* part that convert data set to output stream, called generator,
+
+* data accumulation buffer,
+
+* business logic that glue all parts together.
+
+Serializer and deserializer provides a simple toolset to pack and extract various data fields in data streams. You can describe order of fields as an orderes set of calls. For example you see in device documents something like that:
+
+![](./docs/typical_header.png "Typical Header")
+
+To serialize this sequence you can use code like this:
+
+```
+...
+uint16_t addr;
+uint8_t len;
+uint32_t count;
+...
+uint8_t buffer[100];
+serializer out(buffer, sizeof(buffer));
+out.u16(addr).u8(len).u32(count);
+if (out.error == ERR_OK) { tx(buffer, out.pos); } 
+...
+```
+
+Extraction from the buffer is the same way:
+
+```
+...
+uint16_t addr;
+uint8_t len;
+uint32_t count;
+...
+uint8_t input_buffer[100];
+deserializer in(buffer, sizeof(buffer));
+in.u16(addr).u8(len).u32(count);
+if (in.error != ERR_OK) { break; }
+...
+```
+
+Pretty easy, isn't it?
+
+See system bus implementations as a comprehensive example of serialization toolset usage.
+
+This part is still under construct but it has maximum priority and soon you will see it complete.
+
 # Licence #
 
 Asshole public licence: if you like this code, just tell your buddies about it or you'll be an asshole.
