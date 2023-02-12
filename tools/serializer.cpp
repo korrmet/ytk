@@ -34,35 +34,11 @@ serializer& serializer::hn()
 { byte_order = (byte_order) ? false : true;
   return *this; }
 
-serializer& serializer::u8(uint8_t val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
+template <typename TYPE>
+serializer& serializer::v(TYPE& val) { return a(&val, sizeof(TYPE)); }
 
-    return *this; }
-
-  copy((uint8_t*)buffer + pos, &val, sizeof(val), byte_order);
-  pos += sizeof(val);
-  return *this; }
-
-serializer& serializer::u16(uint16_t val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
-
-    return *this; }
-
-  copy((uint8_t*)buffer + pos, &val, sizeof(val), byte_order);
-  pos += sizeof(val);
-  return *this; }
-
-serializer& serializer::u32(uint32_t val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
-
-    return *this; }
-
-  copy((uint8_t*)buffer + pos, &val, sizeof(val), byte_order);
-  pos += sizeof(val);
-  return *this; }
+template <typename TYPE>
+serializer& serializer::v(TYPE* val) { return a(val, sizeof(TYPE)); }
 
 serializer& serializer::a(void* buf, uint32_t len)
 { if (pos + len >= buffer_size)
@@ -70,7 +46,7 @@ serializer& serializer::a(void* buf, uint32_t len)
 
     return *this; }
 
-  copy((uint8_t*)buffer + pos, buf, len);
+  copy((uint8_t*)buffer + pos, buf, len, byte_order);
   pos += len;
   return *this; }
 
@@ -110,32 +86,11 @@ deserializer& deserializer::hn()
 { byte_order = (byte_order) ? false : true;
   return *this; }
 
-deserializer& deserializer::u8(uint8_t& val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERRUN; }
+template <typename TYPE>
+deserializer& deserializer::v(TYPE& val) { return a(&val, sizeof(TYPE)); }
 
-    return *this; }
-
-  copy(&val, (uint8_t*)buffer + pos, sizeof(val), byte_order);
-  return *this; }
-
-deserializer& deserializer::u16(uint16_t& val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERRUN; }
-
-    return *this; }
-
-  copy(&val, (uint8_t*)buffer + pos, sizeof(val), byte_order);
-  return *this; }
-
-deserializer& deserializer::u32(uint32_t& val)
-{ if (pos + sizeof(val) >= buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERRUN; }
-
-    return *this; }
-
-  copy(&val, (uint8_t*)buffer + pos, sizeof(val), byte_order);
-  return *this; }
+template <typename TYPE>
+deserializer& deserializer::v(TYPE* val) { return a(val, sizeof(TYPE)); }
 
 deserializer& deserializer::a(void* buf, uint32_t len)
 { if (pos + len >= buffer_size)
@@ -143,7 +98,7 @@ deserializer& deserializer::a(void* buf, uint32_t len)
 
     return *this; }
 
-  copy(buf, (uint8_t*)buffer + pos, len);
+  copy(buf, (uint8_t*)buffer + pos, len, byte_order);
   return *this; }
 
 deserializer& deserializer::s(char* buf, uint32_t len)

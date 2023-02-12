@@ -28,26 +28,31 @@ class serializer
      *  \return reference to the current serializer object */
     serializer& hn();
 
-    /** \brief add uint8_t to sequence
+    /** \brief   insert the value by reference in the data stream
+     *  \warning be careful using the type that actually is an array.
+     *           this method uses sizeof, but not all compilers can
+     *           get size of type, size of the value might be diffirent than
+     *           you expect. at present moment only gcc is preferred compiler
      *
-     *  \param val value to be added
+     *  \tparam TYPE type of the variable
+     *  \param  val  reference to the variable
      *
      *  \return reference to the current serializer object */
-    serializer& u8(uint8_t val);
+    template <typename TYPE>
+    serializer& v(TYPE& val);
 
-    /** \brief add uint16_t to sequence
+    /** \brief   insert the value by pointer in the data stream
+     *  \warning be careful using the type that actually is an array.
+     *           this method uses sizeof, but not all compilers can
+     *           get size of type, size of the value might be diffirent than
+     *           you expect. at present moment only gcc is preferred compiler
      *
-     *  \parm val value to be added
-     *
-     *  \return reference to the current serializer object */
-    serializer& u16(uint16_t val);
-
-    /** \brief add uint32_t to sequence
-     *
-     *  \param val value to be added
+     *  \tparam TYPE type of the variable
+     *  \param  val  reference to the variable
      *
      *  \return reference to the current serializer object */
-    serializer& u32(uint32_t val);
+    template <typename TYPE>
+    serializer& v(TYPE* val);
 
     /** \brief add array to the sequence
      *
@@ -112,26 +117,31 @@ class deserializer
      *  \return reference to the current deserializer object */
     deserializer& hn();
 
-    /** \brief extracts uint8_t from the sequence
+    /** \brief   extracts the value by reference form the sequence
+     *  \warning be careful using the type that actually is an array.
+     *           this method uses sizeof, but not all compilers can
+     *           get size of type, size of the value might be diffirent than
+     *           you expect. at present moment only gcc is preferred compiler
      *
-     *  \param val reference to the buffer for value
+     *  \tparam TYPE type of the variable
+     *  \param  val  reference to the variable
      *
      *  \return reference to the current deserializer object */
-    deserializer& u8(uint8_t& val);
+    template <typename TYPE>
+    deserializer& v(TYPE& val);
 
-    /** \brief extracts uint16_t from the sequence
+    /** \brief   extracts the value by pointer form the sequence
+     *  \warning be careful using the type that actually is an array.
+     *           this method uses sizeof, but not all compilers can
+     *           get size of type, size of the value might be diffirent than
+     *           you expect. at present moment only gcc is preferred compiler
      *
-     *  \param val reference to the buffer for the value
-     *
-     *  \return reference to the current deserializer object */
-    deserializer& u16(uint16_t& val);
-
-    /** \brief extracts uint32_t from the sequence
-     *
-     *  \param val referenc to the buffer for the value
+     *  \tparam TYPE type of the variable
+     *  \param  val  pointer to the variable
      *
      *  \return reference to the current deserializer object */
-    deserializer& u32(uint32_t& val);
+    template <typename TYPE>
+    deserializer& v(TYPE* val);
 
     /** \brief extracts array from the sequence
      *  \warning there is no any check for buffer size, I hope you can deal
