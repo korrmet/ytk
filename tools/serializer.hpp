@@ -28,7 +28,7 @@ class serializer
      *  \return reference to the current serializer object */
     serializer& hn();
 
-    /** \brief   insert the value by reference in the data stream
+    /** \brief   insert the value in the data stream
      *  \warning be careful using the type that actually is an array.
      *           this method uses sizeof, but not all compilers can
      *           get size of type, size of the value might be diffirent than
@@ -39,7 +39,7 @@ class serializer
      *
      *  \return reference to the current serializer object */
     template <typename TYPE>
-    serializer& v(TYPE& val);
+    serializer& v(TYPE val) { return a(&val, sizeof(TYPE)); }
 
     /** \brief   insert the value by pointer in the data stream
      *  \warning be careful using the type that actually is an array.
@@ -52,7 +52,7 @@ class serializer
      *
      *  \return reference to the current serializer object */
     template <typename TYPE>
-    serializer& v(TYPE* val);
+    serializer& v(TYPE* val) { return a(val, sizeof(TYPE)); }
 
     /** \brief add array to the sequence
      *
@@ -63,6 +63,8 @@ class serializer
     serializer& a(void* buf, uint32_t len);
 
     /** \brief add c-string to the sequence
+     *  \todo think about buffer overflow error handling and behavior for
+     *        strings. it should be special rule.
      *
      *  \param str pointer to the null-terminated string literal
      *  \param len maximum size of the string
@@ -128,7 +130,7 @@ class deserializer
      *
      *  \return reference to the current deserializer object */
     template <typename TYPE>
-    deserializer& v(TYPE& val);
+    deserializer& v(TYPE& val) { return a(&val, sizeof(TYPE)); }
 
     /** \brief   extracts the value by pointer form the sequence
      *  \warning be careful using the type that actually is an array.
@@ -141,7 +143,7 @@ class deserializer
      *
      *  \return reference to the current deserializer object */
     template <typename TYPE>
-    deserializer& v(TYPE* val);
+    deserializer& v(TYPE* val) { return a(val, sizeof(TYPE)); }
 
     /** \brief extracts array from the sequence
      *  \warning there is no any check for buffer size, I hope you can deal

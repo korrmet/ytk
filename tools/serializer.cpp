@@ -34,14 +34,8 @@ serializer& serializer::hn()
 { byte_order = (byte_order) ? false : true;
   return *this; }
 
-template <typename TYPE>
-serializer& serializer::v(TYPE& val) { return a(&val, sizeof(TYPE)); }
-
-template <typename TYPE>
-serializer& serializer::v(TYPE* val) { return a(val, sizeof(TYPE)); }
-
 serializer& serializer::a(void* buf, uint32_t len)
-{ if (pos + len >= buffer_size)
+{ if (pos + len > buffer_size)
   { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
 
     return *this; }
@@ -51,7 +45,7 @@ serializer& serializer::a(void* buf, uint32_t len)
   return *this; }
 
 serializer& serializer::s(const char* str, uint32_t len)
-{ if (len != NO_LIMITS && pos + len >= buffer_size)
+{ if (len != NO_LIMITS && pos + len > buffer_size)
   { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
 
     return *this; }
@@ -59,18 +53,21 @@ serializer& serializer::s(const char* str, uint32_t len)
   uint32_t counter = (len == NO_LIMITS) ? 0xFFFFFFFF : len;
   char* buf = (char*)buffer;
 
-  while (*str && counter && pos < buffer_size)
+  while (*str && counter && pos + 1 < buffer_size)
   { *buf = *str;
-    str++; buf++; pos++; }
+    str++; buf++; pos++; counter--; }
 
+  *buf = 0;
+  pos++;
   return *this; }
 
 serializer& serializer::s(char* str, uint32_t len)
 { return s((char*)str, len); }
 
 serializer& serializer::seek(int32_t step)
-{ if (step > 0) { pos = (buffer_size - pos < step) ? buffer_size : pos + step; }
-  else          { pos = (pos < -step) ? 0 : pos + step; }
+{ if (step > 0)
+  { pos = (buffer_size - pos < (uint32_t)step) ? buffer_size : pos + step; }
+  else { pos = (pos < (uint32_t) - step) ? 0 : pos + step; }
 
   return *this; }
 
@@ -86,19 +83,14 @@ deserializer& deserializer::hn()
 { byte_order = (byte_order) ? false : true;
   return *this; }
 
-template <typename TYPE>
-deserializer& deserializer::v(TYPE& val) { return a(&val, sizeof(TYPE)); }
-
-template <typename TYPE>
-deserializer& deserializer::v(TYPE* val) { return a(val, sizeof(TYPE)); }
-
 deserializer& deserializer::a(void* buf, uint32_t len)
-{ if (pos + len >= buffer_size)
+{ if (pos + len > buffer_size)
   { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERRUN; }
 
     return *this; }
 
   copy(buf, (uint8_t*)buffer + pos, len, byte_order);
+  pos += len;
   return *this; }
 
 deserializer& deserializer::s(char* buf, uint32_t len)
@@ -112,7 +104,8 @@ deserializer& deserializer::s(char* buf, uint32_t len)
   return *this; }
 
 deserializer& deserializer::seek(int32_t step)
-{ if (step > 0) { pos = (buffer_size - pos < step) ? buffer_size : pos + step; }
-  else          { pos = (pos < -step) ? 0 : pos + step; }
+{ if (step > 0)
+  { pos = (buffer_size - pos < (uint32_t)step) ? buffer_size : pos + step; }
+  else { pos = (pos < (uint32_t) - step) ? 0 : pos + step; }
 
   return *this; }

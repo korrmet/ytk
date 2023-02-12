@@ -58,6 +58,7 @@ TEST_OPTS += -c
 TESTS += tests/print_string.cpp.test
 TESTS += tests/print_uint.cpp.test
 TESTS += tests/arrayed_buffer.cpp.test
+TESTS += tests/serializer.cpp.test
 
 ifeq ($(FAILED_TEST), Enable)
 .PRECIOUS: $(TESTS)
@@ -74,6 +75,10 @@ tests/print_uint.cpp.test: tests/print_uint.cpp io/print.cpp
 	@./$@ $(TEST_OPTS)
 
 tests/arrayed_buffer.cpp.test: tests/arrayed_buffer.cpp
+	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
+	@./$@ $(TEST_OPTS)
+
+tests/serializer.cpp.test: tests/serializer.cpp tools/serializer.cpp
 	@g++ $? -o $@ $(INCLUDES) $(TEST_FLAG) $(TEST_LIBS) $(DEPFLAGS)
 	@./$@ $(TEST_OPTS)
 
