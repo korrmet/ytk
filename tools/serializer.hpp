@@ -62,9 +62,10 @@ class serializer
      *  \return reference to the current serializer object */
     serializer& a(void* buf, uint32_t len);
 
-    /** \brief add c-string to the sequence
-     *  \todo think about buffer overflow error handling and behavior for
-     *        strings. it should be special rule.
+    /** \brief   add c-string to the sequence
+     *  \details this method guarantees that all available data would be
+     *           written in buffer in borders of requested field size.
+     *           also the string termination is guaranteed
      *
      *  \param str pointer to the null-terminated string literal
      *  \param len maximum size of the string
@@ -155,9 +156,11 @@ class deserializer
      *  \return reference to the current deserializer object */
     deserializer& a(void* buf, uint32_t len);
 
-    /** \brief extracts string from the sequence
-     *  \warning there is no any chek for the buffer size, I hope you can deal
-     *           with it
+    /** \brief   extracts string from the sequence
+     *  \details guarantees that current point would be straight after the
+     *           string terminator
+     *  \warning there is no any chek for the buffer size until len parameter.
+     *           I think you can deal with it.
      *
      *  \param buf pointer to the bufer for the string
      *  \param len size of the string in the sequence

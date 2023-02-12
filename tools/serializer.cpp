@@ -45,17 +45,14 @@ serializer& serializer::a(void* buf, uint32_t len)
   return *this; }
 
 serializer& serializer::s(const char* str, uint32_t len)
-{ if (len != NO_LIMITS && pos + len > buffer_size)
-  { if (errcode == ERR_OK) { errcode = ERR_BUFFER_OVERFLOW; }
-
-    return *this; }
-
-  uint32_t counter = (len == NO_LIMITS) ? 0xFFFFFFFF : len;
+{ uint32_t counter = (len == NO_LIMITS) ? 0xFFFFFFFF : len;
   char* buf = (char*)buffer;
 
   while (*str && counter && pos + 1 < buffer_size)
   { *buf = *str;
     str++; buf++; pos++; counter--; }
+
+  if (*str != 0 && counter != 0) { errcode = ERR_BUFFER_OVERFLOW; }
 
   *buf = 0;
   pos++;
@@ -97,9 +94,17 @@ deserializer& deserializer::s(char* buf, uint32_t len)
 { char* str = (char*)buffer;
   uint32_t counter = (len == NO_LIMITS) ? 0xFFFFFFFF : len;
 
-  while (*str && counter && pos < buffer_size)
+  while (*str && counter - 1 && pos < buffer_size)
   { *buf = *str;
-    str++; buf++; pos++; }
+    str++; buf++; pos++; counter--; }
+
+  if (*str != 0) { errcode = ERR_BUFFER_OVERRUN; }
+
+  *buf = 0;
+
+  while (*str && pos < buffer_size) { str++; pos++; }
+
+  if (pos < buffer_size) { pos++; }
 
   return *this; }
 

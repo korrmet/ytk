@@ -87,7 +87,7 @@ TEST(serializer_unit_tests, serializer_string_limited)
   char expected[5] = { 'a', 'b', 'c', 0, 0 };
   MEMCMP_EQUAL(expected, buffer, sizeof(buffer)); }
 
-IGNORE_TEST(serializer_unit_tests, serializer_string_overflow)
+TEST(serializer_unit_tests, serializer_string_overflow)
 { char buffer[5] = { 0 };
   serializer s(buffer, sizeof(buffer));
   s.s("abcdefg", 8);
@@ -95,6 +95,35 @@ IGNORE_TEST(serializer_unit_tests, serializer_string_overflow)
   CHECK(s.errcode == ERR_BUFFER_OVERFLOW);
   char expected[5] = { 'a', 'b', 'c', 'd', 0 };
   MEMCMP_EQUAL(expected, buffer, sizeof(buffer)); }
+
+TEST(serializer_unit_tests, serializer_empty_string)
+{ uint8_t buffer[5] = { 0xff, 0xff, 0xff, 0xff, 0xff };
+  serializer s(buffer, sizeof(buffer));
+  s.s("");
+  CHECK(s.pos == 1);
+  CHECK(s.errcode == ERR_OK);
+  uint8_t expected[5] = { 0x00, 0xff, 0xff, 0xff, 0xff };
+  MEMCMP_EQUAL(expected, buffer, sizeof(buffer)); }
+
+TEST(serializer_unit_tests, deserializer_string_limited)
+{ char buffer[5] = { 'a', 'b', 'c', 'd', 0 };
+  deserializer ds(buffer, sizeof(buffer));
+  char str[6] = { 'x', 'x', 'x', 'x', 'x', 'x' };
+  ds.s(str, 5);
+  CHECK(ds.pos == 5);
+  CHECK(ds.errcode == ERR_OK);
+  char expected[6] = { 'a', 'b', 'c', 'd', 0, 'x' };
+  MEMCMP_EQUAL(expected, str, sizeof(str)); }
+
+TEST(serializer_unit_tests, deserializer_string_overrun)
+{ char buffer[5] = { 'a', 'b', 'c', 'd', 0 };
+  deserializer ds(buffer, sizeof(buffer));
+  char str[3] = { 'x', 'x', 'x' };
+  ds.s(str, sizeof(str));
+  CHECK(ds.pos == 5);
+  CHECK(ds.errcode == ERR_BUFFER_OVERRUN);
+  char expected[3] = { 'a', 'b', 0 };
+  MEMCMP_EQUAL(expected, str, sizeof(str)); }
 
 int main(int argc, char** argv)
 { return CommandLineTestRunner::RunAllTests(argc, argv); }
