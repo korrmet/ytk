@@ -108,7 +108,7 @@ uint32_t count;
 ...
 uint8_t buffer[100];
 serializer out(buffer, sizeof(buffer));
-out.u16(addr).u8(len).u32(count);
+out.v<uint16_t>(addr).v<uint8_t>(len).v<uint32_t>(count);
 if (out.error == ERR_OK) { tx(buffer, out.pos); } 
 ...
 ```
@@ -123,16 +123,50 @@ uint32_t count;
 ...
 uint8_t input_buffer[100];
 deserializer in(buffer, sizeof(buffer));
-in.u16(addr).u8(len).u32(count);
+in.v<uint16_t>(addr).v<uint8_t>(len).v<unit32_t>(count);
 if (in.error != ERR_OK) { break; }
 ...
 ```
 
 Pretty easy, isn't it?
 
-See system bus implementations as a comprehensive example of serialization toolset usage.
+Look at a little bit complex example. Imagine you have a simple, but complete protocol.
 
-This part is still under construct but it has maximum priority and soon you will see it complete.
+![](./docs/typical_protocol.png "Typical Protocol")
+
+Most likely it would be a class with the following entities:
+
+* data input - it's a method or an interface that provide insertion serial data inside the protocol, it needs to quickly apply data data from remote device without processing data right now, but this is not necessary component
+
+* data output - it's a method or an interface that provide extrection serial data to transmit outside of the protocol, it needs to make able delayed data transmittion, but this it not necessary component
+
+* input buffer - it's a data structure needed to collect data for parsing
+
+* output buffer - it's a data structure needed for temporary storage the data before it would be transmitted or handler outside of the protocol
+
+* set of the requests to the protocol - it's a methods, variables or other data structures that stimulate protocol to perform its actions, for example it may be request to activate relay on a module, or set angle required angle of a servo
+
+* set of protocol data fields - it's a variables or other data structures that represents data that protocol operates, for example it may be coordinates of GNSS or calibration data that should be applied while device initialization
+
+* set of the events and their events - it's a methods, callbacks, flags or other data structures, that stimulate protocol to perform its actions, for example, protocol should notify another piece of code that message arrived, or automatically answer, or maybe transmit messages by schedule
+
+* data stream parser - it's a method that extracts data from the input stream
+
+* data stream generator - it's a methot that pack the data to the output stream
+
+Protocol set on its data fields only actual data values. Data insertion and extraction data are quick. When you implement your own code you can use list above as a checklist to test requirements, and you will see that most of it would be useful.
+
+Finally, let's dive a little deeper:
+
+![](./docs/typical_protocol_interaction_scheme.png "Typical Protocol Interaction Scheme")
+
+On the scheme diamond and arrowed units describes an action and action direction. In upper part you see the parser. It triggers by receiver that pushes byte to input buffer. In some moments later (or may be immediately, as you wish) containment of the buffer should be verified by validator. It would check message length, checksum, addressing or something like this. This action repeats many times. As message sould be recognized as valid deserializer starts its work. It unpacks message fields to protocol data fields in order of calls like described in serializer tools descriptions. Same format use serializer so you can describe order like a preprocessor macro and use it both with serializer and deserializer.
+
+When you need to transmit some data, request or inner business logic proparates serializer and immediately start to combine the output message. After that it should be signed by checksum or anything you need. And finally this message should be transmitted.
+
+As you see, the protocols may have complex structure and behaviour, but it have a lot in common. Moreover, in my opinion it can be standardized, as it once did with text parsers. You can create your protocols quickly and easily using this approach. One day I will figure out how to make a serial protocol generator similar to lex and yacc but for non-textual data.
+
+System bus implemented in similar approach, see it for more comprehensive example. This part is still under construct but it has maximum priority and soon you will see it complete.
 
 # Licence #
 
