@@ -10,17 +10,21 @@ There is no any extra features, just unificated set of tools that combine everyd
 
 * pipelined architecture support
 
+* service-orientied architecture support
+
 * modularity support
 
 * dependency-based initialization system
 
 # Limitations #
 
-* to use whole library as base of your project be sure that the projectg is fully deterministic, because you can't load externl code
+* to use whole library as base of your project be sure that the projectg is fully deterministic, because you can't load external code
 
 * there is no any hardware specific tools, you should write it yourself.
 
 * when you use isolated parts of the library, mind that it isn't thread safe
+
+* there is no threads
 
 # Approach #
 
